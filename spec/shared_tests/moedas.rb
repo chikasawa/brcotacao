@@ -2,7 +2,7 @@
 shared_examples_for 'lanca erro' do |metodo, erro|
   it 'deve lançar um erro' do
     expect do
-      subject.send metodo, data_pesquisada
+      subject.send(metodo, data_pesquisada)
     end.to raise_error erro
   end
 end
@@ -12,7 +12,7 @@ shared_examples_for 'banco central fora' do |metodo|
     let(:data_pesquisada) { Date.new(2011, 12, 10) }
 
     before do
-     Net::HTTP.any_instance.stub(:get).and_raise(SocketError)
+      expect_any_instance_of(Net::HTTP).to receive(:get).and_raise(SocketError)
     end
 
     it_should_behave_like 'lanca erro', metodo, Exception
@@ -20,9 +20,9 @@ shared_examples_for 'banco central fora' do |metodo|
 end
 
 shared_examples_for 'dia sem cotacao' do |metodo|
-  context "mas a moeda nao tem cotação no dia procurado" do
+  context 'mas a moeda nao tem cotação no dia procurado' do
     before do
-       Net::HTTP.any_instance.stub(:get).and_return(double(:msg => 'fail', :body => ''))
+      expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'fail', :body => ''))
     end
     let(:data_pesquisada) { Date.new(2011, 12, 10) }
     it_should_behave_like 'lanca erro', metodo, BrCotacao::Errors::CotacaoNaoEncontradaError
@@ -31,8 +31,8 @@ end
 
 shared_examples_for 'dia com cotacao' do |metodo|
 
-    it "deve retornar o valor esperado para o metodo #{metodo}" do
-    subject.send(metodo, data_pesquisada).should eq(valor_esperado)
+  it "deve retornar o valor esperado para o metodo #{metodo}" do
+    expect(subject.send(metodo, data_pesquisada)).to eq(valor_esperado)
   end
 end
 
@@ -41,7 +41,7 @@ shared_examples_for 'cotacao tempo real' do |metodo|
     let(:erro)   { BrCotacao::Errors::CotacaoAgoraNaoEncontradaError }
 
     before do
-      Net::HTTP.any_instance.stub(:get).and_return(double(:msg => 'ERROR'))
+      expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'ERROR'))
     end
 
     it 'deve lançar um erro' do
@@ -51,15 +51,15 @@ shared_examples_for 'cotacao tempo real' do |metodo|
 
   context 'sistema de cotação está funcionando' do
     before do
-      Net::HTTP.any_instance.stub(:get).and_return(double(:msg => 'OK', :body => "MOEDA1 to MOEDA2,0.9426,11/1/2013,11:33am"))
+      expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => 'MOEDA1 to MOEDA2,0.9426,11/1/2013,11:33am'))
     end
 
-    it "deve retornar a cotacao em um hash" do
-      subject.send(metodo)[:compra].should eql(0.9426)
+    it 'deve retornar a cotacao em um hash' do
+      expect(subject.send(metodo)[:compra]).to eq(0.9426)
     end
 
-    it "deve retornar a data em um hash" do
-      subject.send(metodo)[:data].should eql(Time.parse('2013-11-01 11:33am -0400'))
+    it 'deve retornar a data em um hash' do
+      expect(subject.send(metodo)[:data]).to eq(Time.parse('2013-11-01 11:33am -0400'))
     end
   end
 end

@@ -16,7 +16,7 @@ describe BrCotacao::LatLetoniaRep do
         let(:valor_esperado) { {:compra => 3.4652, :venda => 3.4765} }
 
         before do
-          Net::HTTP.any_instance.stub(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
+          expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
         end
 
         it_should_behave_like 'dia com cotacao', :cotacao
@@ -37,7 +37,7 @@ describe BrCotacao::LatLetoniaRep do
         let(:valor_esperado) { 3.4652 }
 
         before do
-          Net::HTTP.any_instance.stub(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
+          expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
         end
 
         it_should_behave_like 'dia com cotacao', :compra
@@ -58,7 +58,7 @@ describe BrCotacao::LatLetoniaRep do
         let(:valor_esperado) { 3.4765 }
 
         before do
-          Net::HTTP.any_instance.stub(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
+          expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
         end
 
         it_should_behave_like 'dia com cotacao', :venda
