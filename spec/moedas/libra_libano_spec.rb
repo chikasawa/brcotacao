@@ -16,7 +16,7 @@ describe BrCotacao::LibraLibano do
         let(:valor_esperado) { {:compra => 0.0012, :venda => 0.001208} }
 
         before do
-          expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
+          expect(Net::HTTP).to receive(:get_response).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
         end
 
         it_should_behave_like 'dia com cotacao', :cotacao
@@ -37,7 +37,7 @@ describe BrCotacao::LibraLibano do
         let(:valor_esperado) { 0.0012 }
 
         before do
-          expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
+          expect(Net::HTTP).to receive(:get_response).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
         end
 
         it_should_behave_like 'dia com cotacao', :compra
@@ -58,15 +58,11 @@ describe BrCotacao::LibraLibano do
         let(:valor_esperado) { 0.001208 }
 
         before do
-          expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
+          expect(Net::HTTP).to receive(:get_response).and_return(double(:msg => 'OK', :body => fixure('20111209.csv')))
         end
 
         it_should_behave_like 'dia com cotacao', :venda
       end
     end
-  end
-
-  describe '.cotacao_agora' do
-    it_should_behave_like 'cotacao tempo real', :cotacao_agora
   end
 end

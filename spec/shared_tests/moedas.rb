@@ -12,7 +12,7 @@ shared_examples_for 'banco central fora' do |metodo|
     let(:data_pesquisada) { Date.new(2011, 12, 10) }
 
     before do
-      expect_any_instance_of(Net::HTTP).to receive(:get).and_raise(SocketError)
+      expect(Net::HTTP).to receive(:get_response).and_raise(SocketError)
     end
 
     it_should_behave_like 'lanca erro', metodo, Exception
@@ -22,7 +22,7 @@ end
 shared_examples_for 'dia sem cotacao' do |metodo|
   context 'mas a moeda nao tem cotação no dia procurado' do
     before do
-      expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'fail', :body => ''))
+      expect(Net::HTTP).to receive(:get_response).and_return(double(:msg => 'fail', :body => ''))
     end
     let(:data_pesquisada) { Date.new(2011, 12, 10) }
     it_should_behave_like 'lanca erro', metodo, BrCotacao::Errors::CotacaoNaoEncontradaError
@@ -41,7 +41,7 @@ shared_examples_for 'cotacao tempo real' do |metodo|
     let(:erro)   { BrCotacao::Errors::CotacaoAgoraNaoEncontradaError }
 
     before do
-      expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'ERROR'))
+      expect(Net::HTTP).to receive(:get_response).and_return(double(:msg => 'ERROR'))
     end
 
     it 'deve lançar um erro' do
@@ -51,7 +51,7 @@ shared_examples_for 'cotacao tempo real' do |metodo|
 
   context 'sistema de cotação está funcionando' do
     before do
-      expect_any_instance_of(Net::HTTP).to receive(:get).and_return(double(:msg => 'OK', :body => 'MOEDA1 to MOEDA2,0.9426,11/1/2013,11:33am'))
+      expect(Net::HTTP).to receive(:get_response).and_return(double(:msg => 'OK', :body => 'MOEDA1 to MOEDA2,0.9426,11/1/2013,11:33am'))
     end
 
     it 'deve retornar a cotacao em um hash' do
